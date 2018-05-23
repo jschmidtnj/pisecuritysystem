@@ -144,7 +144,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 
 					if match[0]:
             					name = "Barack Obama"
-						print("I see someone named {}!".format(name))
+					print(("found someone named {}!").format(name))
 
 	# otherwise, the room is not occupied
 	else:
