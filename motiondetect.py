@@ -1,3 +1,4 @@
+from pyimagesearch import *
 from pyimagesearch.tempimage import TempImage
 import dropbox as dbx
 from picamera.array import PiRGBArray
@@ -8,9 +9,11 @@ import imutils
 import json
 import time
 import cv2
+import os
+import face_recognition
+import numpy as np
 
-#source: https://www.hackster.io/brendan-lewis/detect-motion-with-opencv-no-pir-sensor-needed-bbeacf
-
+#source: https://www.hackster.io/brendan-lewis/detect-motion-with-opencv-no-pir-sensor-needed-bbeacf 
 
 # filter warnings, load the configuration and initialize the Dropbox
 # client
@@ -18,21 +21,37 @@ warnings.filterwarnings("ignore")
 client = None
 
 # Put your token here:
-db = dbx.Dropbox("YOUR_TOKEN_HERE")
+with open("permissions.json") as f:
+	data = json.load(f)
+db = dbx.Dropbox(data['db-token'])
+client = db
 
 # initialize the camera and grab a reference to the raw camera capture
 camera = PiCamera()
-camera.resolution = (640,480)
-camera.framerate = 16
-rawCapture = PiRGBArray(camera, size=(640,480))
+#default 640x480 - decrease to go faster
+camera.resolution = (1920,1080)
+camera.framerate = 30 #16
+rawCapture = PiRGBArray(camera, size=(1920,1080))
+output = np.empty((1000, 1000, 3), dtype=np.uint8)
+
+# Load a sample picture and learn how to recognize it.
+print("Loading known face image(s)")
+obama_image = face_recognition.load_image_file("obama_small.jpg")
+obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
+
+# Initialize some variables
+face_locations = []
+face_encodings = []
+
 
 # allow the camera to warmup, then initialize the average frame, last
 # uploaded timestamp, and frame motion counter
-print "[INFO] warming up..."
+print("[INFO] warming up...")
 time.sleep(2.5)
 avg = None
 lastUploaded = datetime.datetime.now()
 motionCounter = 0
+text = ""
 
 # capture frames from the camera
 for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
@@ -42,13 +61,14 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 	timestamp = datetime.datetime.now()
 
 	# resize the frame, convert it to grayscale, and blur it
+	#frame=500 default, decrease it to go faster
 	frame = imutils.resize(frame, width=500)
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 	gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
 	# if the average frame is None, initialize it
 	if avg is None:
-		print "[INFO] starting background model..."
+		print("[INFO] starting background model...")
 		avg = gray.copy().astype("float")
 		rawCapture.truncate(0)
 		continue
@@ -63,7 +83,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 	# in holes, then find contours on thresholded image
 	thresh = cv2.threshold(frameDelta, 5, 255, cv2.THRESH_BINARY)[1]
 	thresh = cv2.dilate(thresh, None, iterations=2)
-	(cnts, _) = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+	(_, cnts, _) = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 	# loop over the contours
 	for c in cnts:
@@ -78,7 +98,7 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 		text = "!"
 
 	# draw the text and timestamp on the frame
-	ts = timestamp.strftime("%A %d %B %Y %I:%M:%S%p")
+	ts = timestamp.strftime("%A_%d_B_%Y_%I:%M:%S%p")
 	cv2.putText(frame, "{}".format(ts), (10, 20),
 		cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
@@ -91,23 +111,45 @@ for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True
 
 			# check to see if the number of frames with consistent motion is
 			# high enough
-			if motionCounter >= 8:
+			if motionCounter >= 5: #originally 8
 				# write the image to temporary file
 				t = TempImage()
 				cv2.imwrite(t.path, frame)
-				print "[UPLOAD] {}".format(ts)
-				path = "{base_path}/{timestamp}.jpg".format(base_path="/", timestamp=ts)
-				client.put_file(open(t.path, "rb").read(), path)
-				t.cleanup()
-				
+				print("[UPLOAD] {}".format(ts))
+				name = "{base}{timestamp}".format(base="", timestamp=ts)
+				os.rename(t.path[3:], "{new}.jpg".format(new=name))
+				with open("/home/pi/Desktop/pisecuritysystem/{name}.jpg".format(name=name), "rb") as f:
+					client.files_upload(f.read(), "/{name}.jpg".format(name=name), mute = True)
+				os.remove("{name}.jpg".format(name=name))
+
 				# update the last uploaded timestamp and reset the motion
 				# counter
 				lastUploaded = timestamp
 				motionCounter = 0
+				text=""
+
+				print("Capturing image.")
+				# Grab a single frame of video from the RPi camera as a numpy array
+				camera.capture(output, format="rgb")
+				# Find all the faces and face encodings in the current frame of video
+				face_locations = face_recognition.face_locations(output)
+				print("Found {} faces in image.".format(len(face_locations)))
+				face_encodings = face_recognition.face_encodings(output, face_locations)
+
+				# Loop over each face found in the frame to see if it's someone we know.
+				for face_encoding in face_encodings:
+					# See if the face is a match for the known face(s)
+					match = face_recognition.compare_faces([obama_face_encoding], face_encoding)
+					name = "<Unknown Person>"
+
+					if match[0]:
+            					name = "Barack Obama"
+						print("I see someone named {}!".format(name))
 
 	# otherwise, the room is not occupied
 	else:
 		motionCounter = 0
+		text=""
 
 	# clear the stream in preparation for the next frame
 	rawCapture.truncate(0)
