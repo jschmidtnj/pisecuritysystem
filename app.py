@@ -10,6 +10,16 @@ import cv2
 import face_recognition
 import picamera
 import numpy as np
+import dropbox as dbx
+import json
+import time
+import datetime
+
+#initialize dropbox:
+# Put your token here:
+with open("permissions.json") as f:
+	data = json.load(f)
+db = dbx.Dropbox(data['db-token'])
 
 # Get a reference to the Raspberry Pi camera.
 # If this fails, make sure you have a camera connected to the RPi and that you
