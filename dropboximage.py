@@ -3,27 +3,34 @@ import json
 import time
 import glob
 import os
+import dropbox as dbx
+from picamera.array import PiRGBArray
+import datetime
+import warnings
+import imutils
+import cv2
+from pyimagesearch.tempimage import TempImage
 
 def main():
   # Put your token here:
-  with open("permissions.json") as f:
+  with open("/home/pi/Desktop/pisecuritysystem/permissions.json") as f:
     data = json.load(f)
   client = dbx.Dropbox(data['db-token'])
 
   # initialize the camera and grab a reference to the raw camera capture
-  camera = PiCamera()
+  camera = picamera.PiCamera()
   #default 640x480 - decrease to go faster
   #motion-detect camera resolution
-  camera.resolution = (1920,1080)
-  rawCapture = PiRGBArray(camera, size=(1920,1080))
+  camera.resolution = (1808,1008)
+  rawCapture = PiRGBArray(camera, size=(1808,1008))
 
   for f in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
     frame = f.array
     timestamp = datetime.datetime.now()
-    frame = imutils.resize(frame, width=1920)
+    frame = imutils.resize(frame, width=1808)
 
     # draw the text and timestamp on the frame
-    ts = timestamp.strftime("%A_%d_B_%Y_%I:%M:%S%p")
+    ts = timestamp.strftime("%A_%d_%m_%Y_%I:%M:%S%p")
     cv2.putText(frame, "{}".format(ts), (10, 20),
       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 

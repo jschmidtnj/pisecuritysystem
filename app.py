@@ -3,7 +3,7 @@ import motiondetect
 
 def main():
   #define mode number by push button gpio pins or flags or something
-  mode = 0
+  mode = 1
 
   if mode == 0:
     #run face-recognition

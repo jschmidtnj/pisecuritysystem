@@ -11,11 +11,17 @@ import cv2
 import os
 import numpy as np
 import glob
-import dropboximage
+import dropbox as dbx
+
 
 def main():
 	# filter warnings, load the configuration and initialize the Dropbox
 	warnings.filterwarnings("ignore")
+
+	#dropbox:
+	with open("permissions.json") as f:
+		data = json.load(f)
+	client = dbx.Dropbox(data['db-token'])
 
 	# initialize the camera and grab a reference to the raw camera capture
 	camera = PiCamera()
@@ -79,7 +85,7 @@ def main():
 			text = "!"
 
 		# draw the text and timestamp on the frame
-		ts = timestamp.strftime("%A_%d_B_%Y_%I:%M:%S%p")
+		ts = timestamp.strftime("%A_%d_m_%Y_%I:%M:%S%p")
 		cv2.putText(frame, "{}".format(ts), (10, 20),
 			cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
@@ -98,10 +104,10 @@ def main():
 					cv2.imwrite(t.path, frame)
 					name = "{base}{timestamp}".format(base="", timestamp=ts)
 					os.rename(t.path[3:], "{new}.jpg".format(new=name))
+					print("[UPLOAD] {}".format(ts))
+					with open("/home/pi/Desktop/pisecuritysystem/{name}.jpg".format(name=name), "rb") as f:
+						client.files_upload(f.read(), "/{name}.jpg".format(name=name), mute = True)
 					os.remove("{name}.jpg".format(name=name))
-					#optional temporary file above
-					#run the gropboximage.py file here:
-					dropboximage.main()
 					# update the last uploaded timestamp and reset the motion
 					# counter
 					lastUploaded = timestamp
