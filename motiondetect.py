@@ -134,10 +134,11 @@ def main():
 			motionCounter = 0
 			text=""
 
+		if break_script:
+			print("exit now")
+
 		# clear the stream in preparation for the next frame
 		rawCapture.truncate(0)
-		if break_script:
-			print("exiting motiondetect script")
 
 if __name__ == '__main__':
 	main()
