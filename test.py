@@ -1,7 +1,4 @@
-import glob, os
-os.chdir("images")
-faces = []
-for file in glob.glob("*.jpg"):
-	faces.append(file)
-	print(file)
-print(faces)
+import Adafruit_GPIO
+import Adafruit_SSD1306
+text = "asdf"
+print(str(text)[2:(len(text)-1)])

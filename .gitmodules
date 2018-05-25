@@ -1,0 +1,6 @@
+[submodule "Adafruit_Python_SSD1306"]
+	path = Adafruit_Python_SSD1306
+	url = https://github.com/adafruit/Adafruit_Python_SSD1306.git
+[submodule "Adafruit_Python_GPIO"]
+	path = Adafruit_Python_GPIO
+	url = https://github.com/adafruit/Adafruit_Python_GPIO

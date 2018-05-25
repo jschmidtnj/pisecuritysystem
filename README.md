@@ -15,3 +15,5 @@ https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-pytho
 
 http://life2coding.com/install-opencv-3-4-0-python-3-raspberry-pi-3
 
+docker run --privileged --restart=always --name cam -ti alexellis2/streaming:07-05-2018 xxxx-xxxx-xxxx-xxxx
+
