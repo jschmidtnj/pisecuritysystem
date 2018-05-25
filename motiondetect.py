@@ -12,6 +12,7 @@ import cv2
 import os
 import face_recognition
 import numpy as np
+import glob
 
 # filter warnings, load the configuration and initialize the Dropbox
 warnings.filterwarnings("ignore")
@@ -33,8 +34,13 @@ output = np.empty((240, 320, 3), dtype=np.uint8)
 
 # Load a sample picture and learn how to recognize it.
 print("Loading known face image(s)")
-obama_image = face_recognition.load_image_file("obama_small.jpg")
-obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
+images = []
+encoding = []
+os.chdir("images")
+for file in glob.glob("*.jpg"):
+	face_recognition.load_image-file(file)
+	faces.append(file)
+	encoding.append(face_recognition.face_encodings(file)[0])
 
 # Initialize some variables
 face_locations = []
