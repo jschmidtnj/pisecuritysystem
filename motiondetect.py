@@ -138,7 +138,6 @@ def main():
 		rawCapture.truncate(0)
 		if break_script:
 			print("exiting motiondetect script")
-			exit()
 
 if __name__ == '__main__':
 	main()
