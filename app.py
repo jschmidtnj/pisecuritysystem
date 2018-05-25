@@ -53,7 +53,7 @@ font = ImageFont.load_default()
 mode_text = "Press Mode to Start"
 back_text = "Press PWR to shutdown"
 mode = True
-start = True
+set_gpio = True
 
 def main():
   global start
@@ -103,13 +103,13 @@ def main():
       back_text = "press mode to quit"
       #mode 1
       facerecognition.main()
-      start=True
+      set_gpio=True
     else:
       mode_text = "motion detect"
       back_text = "press mode to quit"
       #mode 2
       motiondetect.main()
-      start=True
+      set_gpio=True
   def power_button_pressed(channel):
     print("power button pressed")
     os.system("shutdown now -h")
@@ -130,9 +130,9 @@ def main():
     # else is happening in the program, the function power_button_pressed will be run
     # 'bouncetime=300' includes the bounce control written into interrupts2a.py
     GPIO.add_event_detect(23, GPIO.FALLING, callback=main.power_button_pressed, bouncetime=300)
-  if start:
+  if set_gpio:
     setup_gpio()
-    start=False
+    set_gpio=False
   GPIO.cleanup()           # clean up GPIO on normal exit
 
 if __name__ == '__main__':
