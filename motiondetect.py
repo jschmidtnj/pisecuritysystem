@@ -12,7 +12,8 @@ import os
 import numpy as np
 import glob
 import dropbox as dbx
-
+import RPi.GPIO as GPIO
+import sys
 
 def main():
 	# filter warnings, load the configuration and initialize the Dropbox

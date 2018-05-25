@@ -3,8 +3,6 @@ import motiondetect
 import RPi.GPIO as GPIO
 import os
 import sys
-sys.path.append("~/Desktop/pisecuritysystem/Adafruit_Python_GPIO")
-sys.path.append("~/Desktop/pisecuritysystem/Adafruit_Python_SSD1306")
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_SSD1306
 from PIL import Image
@@ -53,10 +51,13 @@ font = ImageFont.load_default()
 # font = ImageFont.truetype('Minecraftia.ttf', 8)
 
 mode_text = "Press Mode to Start"
+back_text = "Press PWR to shutdown"
 mode = True
 
 def main():
   global mode
+  global mode_text
+  global back_text
   #get display
   global disp
   # Draw a black filled box to clear the image.
@@ -74,6 +75,7 @@ def main():
 
   # Write two lines of text.
   draw.text((x, top),       mode_text, font=font, fill=255)
+  draw.text((x, top + space * 1),       back_text, font=font, fill=255)
   new_text = str(IP)[2:(len(str(IP))-3)]
   draw.text((x, top + space * 3),       "IP: " + new_text,  font=font, fill=255)
   new_text = str(CPU)[2:(len(str(CPU))-1)]
@@ -97,6 +99,7 @@ def main():
   def mode_button_pressed(channel):
     global mode
     global mode_text
+    global back_text
     global disp
     # Draw a black filled box to clear the image.
     draw.rectangle((0,0,width,height), outline=0, fill=0)
@@ -112,7 +115,8 @@ def main():
     Disk = subprocess.check_output(cmd, shell = True )
 
     # Write two lines of text.
-    draw.text((x, top),       mode_text, font=font, fill=255)
+    draw.text((x, top),                   mode_text, font=font, fill=255)
+    draw.text((x, top + space * 1),       back_text, font=font, fill=255)
     new_text = str(IP)[2:(len(str(IP))-3)]
     draw.text((x, top + space * 3),       "IP: " + new_text,  font=font, fill=255)
     new_text = str(CPU)[2:(len(str(CPU))-1)]
@@ -130,10 +134,12 @@ def main():
     mode = not mode
     if mode:
       mode_text = "face recognition"
+      back_text = "press power to quit"
       #mode 1
       facerecognition.main()
     else:
       mode_text = "motion detect"
+      back_text = "press power to quit"
       #mode 2
       motiondetect.main()
   def power_button_pressed(channel):
