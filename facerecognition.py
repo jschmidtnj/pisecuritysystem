@@ -10,16 +10,11 @@ import cv2
 import face_recognition
 import picamera
 import numpy as np
-import dropbox as dbx
 import json
 import time
 import datetime
-
-#initialize dropbox:
-# Put your token here:
-with open("permissions.json") as f:
-	data = json.load(f)
-db = dbx.Dropbox(data['db-token'])
+import glob
+import os
 
 # Get a reference to the Raspberry Pi camera.
 # If this fails, make sure you have a camera connected to the RPi and that you
@@ -30,8 +25,13 @@ output = np.empty((240, 320, 3), dtype=np.uint8)
 
 # Load a sample picture and learn how to recognize it.
 print("Loading known face image(s)")
-obama_image = face_recognition.load_image_file("obama_small.jpg")
-obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
+images = []
+encoding = []
+os.chdir("images")
+for file in glob.glob("*.jpg"):
+	face_recognition.load_image-file(file)
+	faces.append(file)
+	encodings.append(face_recognition.face_encodings(file[0]))
 
 # Initialize some variables
 face_locations = []
@@ -47,13 +47,18 @@ while True:
     print("Found {} faces in image.".format(len(face_locations)))
     face_encodings = face_recognition.face_encodings(output, face_locations)
 
+    intruder = False
     # Loop over each face found in the frame to see if it's someone we know.
     for face_encoding in face_encodings:
-        # See if the face is a match for the known face(s)
-        match = face_recognition.compare_faces([obama_face_encoding], face_encoding)
-        name = "<Unknown Person>"
+	# See if the face is a match for the known face(s)
+        match = face_recognition.compare_faces(encodings, face_encoding)
 
-        if match[0]:
-            name = "Barack Obama"
+        if match[0] == False:
+            intruder = True
 
-print("I see someone named {}!".format(name))
+        if intruder:
+            print("I see an Intruder!")
+        #run the send to dropbox script
+        else:
+            print("Everyone is friendly!")
+if __name__ == '__main__':
