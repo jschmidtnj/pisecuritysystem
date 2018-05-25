@@ -105,4 +105,5 @@ venv.bak/
 
 #permissions
 permissions.json
-images
+#pictures of people to ignore
+images/
