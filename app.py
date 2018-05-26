@@ -54,8 +54,11 @@ mode_text = "Press Mode to Start"
 back_text = "Press PWR to shutdown"
 mode = True
 set_gpio = True
-
+count=0
 def main():
+  global GPIO
+  global count
+  count += 1
   global start
   global mode
   global mode_text
@@ -93,6 +96,7 @@ def main():
   disp.display()
 
   def mode_button_pressed(channel):
+    global GPIO
     global mode
     global mode_text
     global back_text
@@ -106,13 +110,18 @@ def main():
       #mode 1
       GPIO.cleanup()
       facerecognition.main()
+      GPIO.cleanup()
+      time.sleep(.5)
       set_gpio=True
     else:
       mode_text = "motion detect"
       back_text = "press mode to quit"
       #mode 2
       GPIO.cleanup()
-      motiondetect.main()
+      other_camera = motiondetect.main()
+      GPIO.cleanup()
+      other_camera.close()
+      time.sleep(.5)
       set_gpio=True
   def power_button_pressed(channel):
     GPIO.cleanup()

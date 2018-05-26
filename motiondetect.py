@@ -142,10 +142,11 @@ def main():
 		rawCapture.truncate(0)
 		if break_script:
 			GPIO.cleanup()
-			camera.close()
 			print("exit now")
 			break
 	time.sleep(.5) #pause for .5 seconds
+	camera.close()
+	print("camera closed")
 
 if __name__ == '__main__':
 	main()

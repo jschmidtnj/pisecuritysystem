@@ -86,6 +86,7 @@ def main():
 			print("ending script")
 			break
 	camera.close()
+	print("camera closed")
 
 if __name__ == '__main__':
 	main()
