@@ -93,6 +93,8 @@ def main():
   disp.display()
 
   def setup_gpio():
+    global GPIO
+    print("setting up gpio")
     def mode_button_pressed(channel):
       global mode
       global mode_text
