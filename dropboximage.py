@@ -44,6 +44,7 @@ def main():
     os.remove("{name}.jpg".format(name=name))
 
     rawCapture.truncate(0)
+    camera.close()
     break
 if __name__ == '__main__':
   main()

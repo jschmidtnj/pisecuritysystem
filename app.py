@@ -91,7 +91,7 @@ def main():
   # Display image.
   disp.image(image)
   disp.display()
-  
+
   def mode_button_pressed(channel):
     global mode
     global mode_text
@@ -104,19 +104,20 @@ def main():
       mode_text = "face recognition"
       back_text = "press mode to quit"
       #mode 1
-      GPIO.remove_event_detect(23)
+      GPIO.cleanup()
       facerecognition.main()
       set_gpio=True
     else:
       mode_text = "motion detect"
       back_text = "press mode to quit"
       #mode 2
-      GPIO.remove_event_detect(23)
+      GPIO.cleanup()
       motiondetect.main()
       set_gpio=True
   def power_button_pressed(channel):
+    GPIO.cleanup()
     print("power button pressed")
-    os.system("shutdown now -h")
+    os.system("sudo shutdown now -h")
 
   if set_gpio:
     print("setting up gpio")
@@ -136,7 +137,6 @@ def main():
     # 'bouncetime=300' includes the bounce control written into interrupts2a.py
     GPIO.add_event_detect(23, GPIO.FALLING, callback=power_button_pressed, bouncetime=300)
     set_gpio=False
-  GPIO.cleanup()           # clean up GPIO on normal exit
 
 if __name__ == '__main__':
   #facerecognition.main() #runs mode 1 when first used
