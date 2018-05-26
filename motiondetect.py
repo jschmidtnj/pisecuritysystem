@@ -15,13 +15,16 @@ import dropbox as dbx
 import RPi.GPIO as GPIO
 import sys
 
+break_script = False
+
 def main():
-	break_script = False
+	global break_script
 	# filter warnings, load the configuration and initialize the Dropbox
 	warnings.filterwarnings("ignore")
 
 	#setup gpio
 	def power_button_pressed(channel):
+		global break_script
 		break_script = True
 		GPIO.remove_event_detect(17)
 	GPIO.setmode(GPIO.BCM)
@@ -136,6 +139,7 @@ def main():
 
 		if break_script:
 			print("exit now")
+			break
 
 		# clear the stream in preparation for the next frame
 		rawCapture.truncate(0)

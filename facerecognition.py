@@ -17,11 +17,14 @@ import glob
 import os
 import dropboximage
 import RPi.GPIO as GPIO
+break_script = False
 
 def main():
-	break_script = False
+	global break_script
 	#setup gpio
 	def power_button_pressed(channel):
+		global break_script
+		print("end script")
 		break_script = True
 		GPIO.remove_event_detect(17)
 	GPIO.setmode(GPIO.BCM)

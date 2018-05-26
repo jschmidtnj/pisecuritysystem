@@ -60,6 +60,7 @@ def main():
   global mode
   global mode_text
   global back_text
+  global set_gpio
   #get display
   global disp
   # Draw a black filled box to clear the image.
@@ -95,6 +96,7 @@ def main():
     global mode
     global mode_text
     global back_text
+    global set_gpio
 
     print("mode button pressed")
     mode = not mode
@@ -102,12 +104,14 @@ def main():
       mode_text = "face recognition"
       back_text = "press mode to quit"
       #mode 1
+      GPIO.remove_event_detect(23)
       facerecognition.main()
       set_gpio=True
     else:
       mode_text = "motion detect"
       back_text = "press mode to quit"
       #mode 2
+      GPIO.remove_event_detect(23)
       motiondetect.main()
       set_gpio=True
   def power_button_pressed(channel):
@@ -124,12 +128,12 @@ def main():
     #define mode number by push button gpio pins or flags or something
     # when a falling edge is detected on port 17, regardless of whatever
     # else is happening in the program, the function mode_button_pressed will be run
-    GPIO.add_event_detect(17, GPIO.FALLING, callback=main.mode_button_pressed, bouncetime=300)
+    GPIO.add_event_detect(17, GPIO.FALLING, callback=mode_button_pressed, bouncetime=300)
 
     # when a falling edge is detected on port 23, regardless of whatever
     # else is happening in the program, the function power_button_pressed will be run
     # 'bouncetime=300' includes the bounce control written into interrupts2a.py
-    GPIO.add_event_detect(23, GPIO.FALLING, callback=main.power_button_pressed, bouncetime=300)
+    GPIO.add_event_detect(23, GPIO.FALLING, callback=power_button_pressed, bouncetime=300)
   if set_gpio:
     setup_gpio()
     set_gpio=False
