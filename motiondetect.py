@@ -17,8 +17,8 @@ import sys
 
 break_script = False
 
-def main():
-	pin_num = 17
+def motionmain():
+	pin_num = 22
 	global break_script
 	# filter warnings, load the configuration and initialize the Dropbox
 	warnings.filterwarnings("ignore")
@@ -144,9 +144,11 @@ def main():
 			GPIO.cleanup()
 			print("exit now")
 			break
-	time.sleep(.5) #pause for .5 seconds
+	time.sleep(.25) #pause for .25 seconds
 	camera.close()
+	del camera
 	print("camera closed")
+	time.sleep(.25)
 
 if __name__ == '__main__':
-	main()
+	motionmain()

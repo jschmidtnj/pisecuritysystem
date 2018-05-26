@@ -19,8 +19,8 @@ import dropboximage
 import RPi.GPIO as GPIO
 break_script = False
 
-def main():
-	pin_num = 17
+def facemain():
+	pin_num = 22
 	global break_script
 	#setup gpio
 	def power_button_pressed(channel):
@@ -89,4 +89,4 @@ def main():
 	print("camera closed")
 
 if __name__ == '__main__':
-	main()
+	facemain()

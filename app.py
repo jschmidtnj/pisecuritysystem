@@ -54,18 +54,19 @@ mode_text = "Press Mode to Start"
 back_text = "Press PWR to shutdown"
 mode = True
 set_gpio = True
-count=0
-def main():
-  global GPIO
-  global count
-  count += 1
-  global start
+print("setup complete")
+
+def mainfunc():
   global mode
   global mode_text
   global back_text
   global set_gpio
   #get display
   global disp
+
+  # Get drawing object to draw on image.
+  draw = ImageDraw.Draw(image)
+
   # Draw a black filled box to clear the image.
   draw.rectangle((0,0,width,height), outline=0, fill=0)
 
@@ -92,9 +93,10 @@ def main():
   draw.text((x, top + space * 6),    new_text,  font=font, fill=255)
 
   # Display image.
+  disp.clear()
   disp.image(image)
   disp.display()
-
+  time.sleep(2)
   def mode_button_pressed(channel):
     global GPIO
     global mode
@@ -106,28 +108,28 @@ def main():
     mode = not mode
     if mode:
       mode_text = "face recognition"
-      back_text = "press mode to quit"
+      back_text = "press back to quit"
       #mode 1
       GPIO.cleanup()
-      facerecognition.main()
+      facerecognition.facemain()
+      mode_text = "press mode to switch"
       GPIO.cleanup()
       time.sleep(.5)
-      set_gpio=True
+      set_gpio=False
     else:
       mode_text = "motion detect"
-      back_text = "press mode to quit"
+      back_text = "press back to quit"
       #mode 2
       GPIO.cleanup()
-      other_camera = motiondetect.main()
+      motiondetect.motionmain()
       GPIO.cleanup()
-      other_camera.close()
+      mode_text = "press mode to switch"
       time.sleep(.5)
-      set_gpio=True
+      set_gpio=False
   def power_button_pressed(channel):
     GPIO.cleanup()
     print("power button pressed")
     os.system("sudo shutdown now -h")
-
   if set_gpio:
     print("setting up gpio")
     GPIO.setmode(GPIO.BCM)
@@ -150,4 +152,4 @@ def main():
 if __name__ == '__main__':
   #facerecognition.main() #runs mode 1 when first used
   while True:
-    main()
+    mainfunc()
