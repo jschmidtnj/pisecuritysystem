@@ -12,33 +12,22 @@ import os
 import numpy as np
 import glob
 import dropbox as dbx
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO1
 import sys
-
-break_script = False
 
 def motionmain():
 	pin_num = 22
-	global break_script
 	# filter warnings, load the configuration and initialize the Dropbox
 	warnings.filterwarnings("ignore")
 
 	#setup gpio
-	def button_pressed(channel):
-		global break_script
-		break_script = True
-		GPIO.cleanup()
-	GPIO.setmode(GPIO.BCM)
+	GPIO1.setmode(GPIO1.BCM)
 	# GPIO 23 & 17 set up as inputs, pulled up to avoid false detection.
 	# Both ports are wired to connect to GND on button press.
 	# So we'll be setting up falling edge detection for both
-	GPIO.setup(pin_num, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-	#define mode number by push button gpio pins or flags or something
-	# when a falling edge is detected on port 17, regardless of whatever
-	# else is happening in the program, the function mode_button_pressed will be run
-	GPIO.add_event_detect(pin_num, GPIO.FALLING, callback=button_pressed, bouncetime=300)
+	GPIO1.setup(pin_num, GPIO1.IN, pull_up_down=GPIO1.PUD_UP)
 	#dropbox:
-	with open("permissions.json") as f:
+	with open("/home/pi/Desktop/pisecuritysystem/permissions.json") as f:
 		data = json.load(f)
 	client = dbx.Dropbox(data['db-token'])
 
@@ -140,13 +129,13 @@ def motionmain():
 
 		# clear the stream in preparation for the next frame
 		rawCapture.truncate(0)
-		if break_script:
-			GPIO.cleanup()
+		if GPIO1.input(pin_num) == False:
+			print("button pressed")
 			print("exit now")
 			break
+	GPIO1.cleanup()
 	time.sleep(.25) #pause for .25 seconds
 	camera.close()
-	del camera
 	print("camera closed")
 	time.sleep(.25)
 

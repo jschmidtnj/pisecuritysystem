@@ -16,27 +16,19 @@ import datetime
 import glob
 import os
 import dropboximage
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO2
 break_script = False
 
 def facemain():
 	pin_num = 22
-	global break_script
 	#setup gpio
-	def power_button_pressed(channel):
-		global break_script
-		print("end script")
-		break_script = True
-		GPIO.cleanup()
-	GPIO.setmode(GPIO.BCM)
+	GPIO2.setmode(GPIO2.BCM)
 	# GPIO 23 & 17 set up as inputs, pulled up to avoid false detection.
 	# Both ports are wired to connect to GND on button press.
 	# So we'll be setting up falling edge detection for both
-	GPIO.setup(pin_num, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-	#define mode number by push button gpio pins or flags or something
-	# when a falling edge is detected on port 17, regardless of whatever
-	# else is happening in the program, the function mode_button_pressed will be run
-	GPIO.add_event_detect(pin_num, GPIO.FALLING, callback=power_button_pressed, bouncetime=300)
+	GPIO2.setup(pin_num, GPIO2.IN, pull_up_down=GPIO2.PUD_UP)
+
+
 	# Get a reference to the Raspberry Pi camera.
 	# If this fails, make sure you have a camera connected to the RPi and that you
 	# enabled your camera in raspi-config and rebooted first.
@@ -77,14 +69,19 @@ def facemain():
 
 			if intruder:
 				print("I see an Intruder!")
+				camera.close()
+				time.sleep(.5)
 				#run the send to dropbox script
-				dropboximage.main()
+				dropboximage.dbxmain()
+				camera = picamera.PiCamera()
+				camera.resolution = (320, 240)
 
 			else:
 				print("Everyone is friendly!")
-		if break_script:
+		if GPIO2.input(pin_num) == False:
 			print("ending script")
 			break
+	GPIO2.cleanup()
 	camera.close()
 	print("camera closed")
 

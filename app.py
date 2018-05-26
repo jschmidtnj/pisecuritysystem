@@ -52,7 +52,7 @@ font = ImageFont.load_default()
 
 mode_text = "Press Mode to Start"
 back_text = "Press PWR to shutdown"
-mode = True
+mode = False
 set_gpio = True
 print("setup complete")
 
@@ -110,22 +110,22 @@ def mainfunc():
       mode_text = "face recognition"
       back_text = "press back to quit"
       #mode 1
-      GPIO.cleanup()
+      #GPIO.cleanup()
       facerecognition.facemain()
       mode_text = "press mode to switch"
-      GPIO.cleanup()
+      #GPIO.cleanup()
       time.sleep(.5)
-      set_gpio=False
+      set_gpio=True
     else:
       mode_text = "motion detect"
       back_text = "press back to quit"
       #mode 2
-      GPIO.cleanup()
+      #GPIO.cleanup()
       motiondetect.motionmain()
-      GPIO.cleanup()
+      #GPIO.cleanup()
       mode_text = "press mode to switch"
       time.sleep(.5)
-      set_gpio=False
+      set_gpio=True
   def power_button_pressed(channel):
     GPIO.cleanup()
     print("power button pressed")
