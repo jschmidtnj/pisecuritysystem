@@ -92,33 +92,33 @@ def main():
   disp.image(image)
   disp.display()
 
-  def mode_button_pressed(channel):
-    global mode
-    global mode_text
-    global back_text
-    global set_gpio
-
-    print("mode button pressed")
-    mode = not mode
-    if mode:
-      mode_text = "face recognition"
-      back_text = "press mode to quit"
-      #mode 1
-      GPIO.remove_event_detect(23)
-      facerecognition.main()
-      set_gpio=True
-    else:
-      mode_text = "motion detect"
-      back_text = "press mode to quit"
-      #mode 2
-      GPIO.remove_event_detect(23)
-      motiondetect.main()
-      set_gpio=True
-  def power_button_pressed(channel):
-    print("power button pressed")
-    os.system("shutdown now -h")
-
   def setup_gpio():
+    def mode_button_pressed(channel):
+      global mode
+      global mode_text
+      global back_text
+      global set_gpio
+
+      print("mode button pressed")
+      mode = not mode
+      if mode:
+        mode_text = "face recognition"
+        back_text = "press mode to quit"
+        #mode 1
+        GPIO.remove_event_detect(23)
+        facerecognition.main()
+        set_gpio=True
+      else:
+        mode_text = "motion detect"
+        back_text = "press mode to quit"
+        #mode 2
+        GPIO.remove_event_detect(23)
+        motiondetect.main()
+        set_gpio=True
+    def power_button_pressed(channel):
+      print("power button pressed")
+      os.system("shutdown now -h")
+
     GPIO.setmode(GPIO.BCM)
     # GPIO 23 & 17 set up as inputs, pulled up to avoid false detection.
     # Both ports are wired to connect to GND on button press.
