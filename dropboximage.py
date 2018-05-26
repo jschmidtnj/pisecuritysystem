@@ -39,7 +39,7 @@ def dbxmain():
     print("[UPLOAD] {}".format(ts))
     name = "{base}{timestamp}".format(base="", timestamp=ts)
     os.rename(t.path[3:], "{new}.jpg".format(new=name))
-    with open("/home/pi/Desktop/pisecuritysystem/images/{name}.jpg".format(name=name), "rb") as f:
+    with open("/home/pi/Desktop/pisecuritysystem/{name}.jpg".format(name=name), "rb") as f:
       client.files_upload(f.read(), "/{name}.jpg".format(name=name), mute = True)
     os.remove("{name}.jpg".format(name=name))
 

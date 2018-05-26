@@ -43,7 +43,7 @@ def facemain():
 	for file in glob.glob("*.jpg"):
 		image = face_recognition.load_image_file(file)
 		encodings.append(face_recognition.face_encodings(image)[0])
-
+	os.chdir("..")
 	# Initialize some variables
 	face_locations = []
 	face_encodings = []
