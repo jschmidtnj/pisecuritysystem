@@ -55,8 +55,9 @@ back_text = "Press PWR to shutdown"
 mode = False
 set_gpio = True
 print("setup complete")
-
+count = 0
 def mainfunc():
+  global count
   global mode
   global mode_text
   global back_text
@@ -98,6 +99,10 @@ def mainfunc():
   disp.display()
   time.sleep(2)
   def mode_button_pressed(channel):
+    global count
+    count += 1
+    if count %2 == 0:
+      return
     global GPIO
     global mode
     global mode_text
@@ -127,7 +132,7 @@ def mainfunc():
       time.sleep(.5)
       set_gpio=True
   def power_button_pressed(channel):
-    GPIO.cleanup()
+    #GPIO.cleanup()
     print("power button pressed")
     os.system("sudo shutdown now -h")
   if set_gpio:
