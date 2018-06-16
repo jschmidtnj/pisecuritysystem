@@ -35,3 +35,8 @@ http://life2coding.com/install-opencv-3-4-0-python-3-raspberry-pi-3
 optional youtube live integration:
 docker run --privileged --restart=always --name cam -ti alexellis2/streaming:07-05-2018 xxxx-xxxx-xxxx-xxxx
 the x's are where your youtube api is inputted
+
+## 2.0  
+use https://www.raspberrypi-spy.co.uk/2017/04/raspberry-pi-zero-w-cctv-camera-with-motioneyeos/  
+and https://www.youtube.com/watch?v=OAVvWFT1v5I  
+and https://github.com/ccrisan/motioneyeos/issues/229  
